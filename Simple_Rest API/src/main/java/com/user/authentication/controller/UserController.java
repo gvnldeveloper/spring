@@ -17,9 +17,40 @@ public class UserController {
     For adding new User
      */
     @PostMapping("/adduser")
-    public String addUser(@RequestBody User user) {
-        userRepository.save(user);
-        return "Gaurav Vats";
+    public User addUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    /*
+       For updating User
+   */
+    @PostMapping("/updateuser/{id}")
+    public User updateUser(@RequestBody User user, @PathVariable Integer id) {
+        return userRepository.findById(id).map(
+                usr -> {
+                    usr.setName(user.getName());
+                    usr.setPassword(user.getPassword());
+                    return userRepository.save(usr);
+                }
+        ).orElseGet(() -> {
+            return null;
+        });
+    }
+
+    /*
+     For updating or creating new User
+ */
+    @PutMapping("/updateorcreateuser/{id}")
+    public User updateOrCreateUser(@RequestBody User user, @PathVariable Integer id) {
+        return userRepository.findById(id).map(
+                usr -> {
+                    usr.setName(user.getName());
+                    usr.setPassword(user.getPassword());
+                    return userRepository.save(usr);
+                }
+        ).orElseGet(() -> {
+            return userRepository.save(user);
+        });
     }
 
     /*
@@ -46,35 +77,5 @@ public class UserController {
         userRepository.deleteById(id);
     }
 
-    /*
-        For updating User
-    */
-    @PostMapping("/updateuser/{id}")
-    public User updateUser(@RequestBody User user, @PathVariable Integer id) {
-        return userRepository.findById(id).map(
-                usr -> {
-                    usr.setName(user.getName());
-                    usr.setPassword(user.getPassword());
-                    return userRepository.save(usr);
-                }
-        ).orElseGet(() -> {
-            return null;
-        });
-    }
 
-    /*
-     For updating User
- */
-    @PutMapping("/updateorcreateuser/{id}")
-    public User updateOrCreateUser(@RequestBody User user, @PathVariable Integer id) {
-        return userRepository.findById(id).map(
-                usr -> {
-                    usr.setName(user.getName());
-                    usr.setPassword(user.getPassword());
-                    return userRepository.save(usr);
-                }
-        ).orElseGet(() -> {
-            return userRepository.save(user);
-        });
-    }
 }
